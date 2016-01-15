@@ -1,0 +1,5 @@
+workspace: "/home/fiwareulpgc/mirrors/repos"
+fiwareulpgcmirror/source-repo:
+  repository_folder: "fiwareulpgcmirror_source-repo"
+  repository_to_mirror: "git@github.com:fiwareulpgcmirror/source-repo.git"
+  repository_mirror_remote: "git@github.com:fiwareulpgcmirror/mirrored-repo.git"
