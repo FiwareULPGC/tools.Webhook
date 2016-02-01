@@ -26,6 +26,23 @@ $app->post('/hook',function() use($app){
 
             $app->response->setStatus(200);
 });
+
+$app->post('/deny-pull-request',function() use($app){
+            $body = $app->request->getBody();
+
+            $myfile = fopen("/var/tmp/pull-request.txt", "w") or die("Unable to open file!");
+
+            fwrite($myfile, $body);
+            fwrite($myfile, "\n");
+
+            fclose($myfile);
+
+            $output = shell_exec("sudo -u fiwareulpgc /home/fiwareulpgc/mirrors/script/deny-pull-requests.py '".$body."' /home/fiwareulpgc/mirrors/script/utils/token-fiware.txt");
+
+            echo $body;
+
+            $app->response->setStatus(200);
+});
  
 $app->run();
 ?>

@@ -7,50 +7,75 @@ import sys
 
 import yaml
 
-class cd:
-    """Context manager for changing the current working directory"""
-    def __init__(self, newPath):
-        self.newPath = os.path.expanduser(newPath)
+sys.path.append(os.path.dirname(__file__))
+from utils.utils import *
+from utils.githubmirrorutils import GithubMirrorUtils
 
-    def __enter__(self):
-        self.savedPath = os.getcwd()
-        os.chdir(self.newPath)
+pr_hook_url = 'http://130.206.122.149/mirror/deny-pull-request'
 
-    def __exit__(self, etype, value, traceback):
-        os.chdir(self.savedPath)
+def setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url):
 
-if len(sys.argv) < 2: 
-	print "No arguments were passed."
-	sys.exit(-1)
+	directory = os.path.dirname(os.path.abspath(__file__))
 
-elif len(sys.argv) > 2: 
-	print "Only one argument is accepted."
-	sys.exit(-2)
+	with open(directory+"/conf.yaml", "r") as f:
+		config = yaml.load(f)
+		config["workspace"] = os.path.expanduser(config["workspace"])
+		
+	mirror_user_repo_name = get_user_repo_from_github_url(mirror_remote_url)
+	repository_folder = "{}/{}_{}".format(config["workspace"], mirror_user_repo_name['user'], mirror_user_repo_name['repo'])
 
-repo_name = sys.argv[1]
+	if not os.path.exists(repository_folder):
 
-directory = os.path.dirname(os.path.abspath(__file__))
+		g = GithubMirrorUtils(token_file)
 
-with open(directory+"/conf.yaml", "r") as f:
-	config = yaml.load(f)
-	config["workspace"] = os.path.expanduser(config["workspace"])
-	
-repository_folder = config["workspace"]+"/"+config[repo_name]["repository_folder"]
+		g.create_update_mirror_repo(mirror_user_repo_name['user'], mirror_user_repo_name['repo'], repo_clone_url, pr_hook_url)
 
-if os.path.exists(repository_folder):
-	shutil.rmtree(repository_folder)
+		os.makedirs(repository_folder)
 
-os.makedirs(repository_folder)
+		if not "source_repo_urls" in config:
+			config["source_repo_urls"] = {}
 
-#print 'call(["git", "clone", "--mirror", {}, {}])'.format(config[repo_name]["repository_to_mirror"], repository_folder)
-call(["git", "clone", "--mirror", config[repo_name]["repository_to_mirror"], repository_folder])
+		config["source_repo_urls"][repo_clone_url] = {"mirror_remote_url": mirror_remote_url}
 
-with cd(repository_folder):
-	#print 'call(["git", "remote", "set-url", "--push", "origin", {}])'.format(config[repo_name]["repository_mirror_remote"])
-	call(["git", "remote", "set-url", "--push", "origin", config[repo_name]["repository_mirror_remote"]])
-	
-	#print 'call(["git", "fetch", "-p", "origin"])'
-	#print 'call(["git", "push", "--mirror"])'
-	call(["git", "fetch", "-p", "origin"])
-	call(["git", "push", "--mirror"])
+		with open(directory+"/conf.yaml", "w") as f:
+			yaml.dump(config, f, default_flow_style=False)
 
+
+	call(["git", "clone", "--mirror", repo_clone_url, repository_folder])
+
+	with cd(repository_folder):
+		call(["git", "remote", "set-url", "--push", "origin", mirror_remote_url])
+		
+		call(["git", "fetch", "-p", "origin"])
+		call(["git", "push", "--mirror"])
+
+	call(["rm", "-rf", repository_folder])
+
+
+if __name__ == "__main__":
+
+	if len(sys.argv) < 4: 
+		print "Three arguments arguments are needed."
+		sys.exit(-1)
+
+	elif len(sys.argv) > 4: 
+		print "Only 3 arguments are accepted."
+		sys.exit(-2)
+
+	repo_clone_url = sys.argv[1]
+	mirror_remote_url = sys.argv[2]
+	token_file = sys.argv[3]
+
+	setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url)
+
+
+# EXAMPLE OF USE
+#
+# def setup_list(filename, org):
+#
+# 	l = parse_clone_mirror_list(filename, org)
+#
+# 	for repo in l:
+# 		setup_mirror(repo[0], repo[1])
+#
+# setup_list('release_summary_r4.html', 'Fiware')
