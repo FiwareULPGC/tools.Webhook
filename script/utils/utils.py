@@ -1,6 +1,5 @@
 #! /usr/bin/env  python
 
-from lxml import html
 import os
 import re
 
@@ -70,50 +69,25 @@ def normalise_repo_name(repo_name):
 	return capitalise_after_chapter(filter_fiware_prefix(repo_name))
 
 
-def parse_clone_mirror_list(filepath, github_org):
+def parse_clone_mirror_list_chapter(urls, chapter, github_org):
 
-	from pprint import pprint
+	clone_mirror_list = []
+	for url in urls:
+		if url.endswith('/'):
+			url = url[0:-1]
 
-	with open(filepath, "r") as f:
-		tree = html.fromstring(f.read())
+		if len(url.split('/')) < 5:
+			print "No repo in {}".format(url)
+			continue
 
-		chapters_repos = tree.xpath('//*[self::h2 or self::tr]')
+		repo_name = url.split('/')[4]
+		source_url = url + '.git'
+		if chapter == 'data':
+			chapter == 'context'
+		repo_name = normalise_repo_name(chapter+'.'+repo_name)
+		remote_url = 'git@github.com:{}/{}.git'.format(github_org, 
+					  repo_name)
 
+		clone_mirror_list.append([source_url, remote_url]) 
 
-		chapter = None
-		clone_mirror_list = []
-		for chapter_repo in chapters_repos:
-			title = chapter_repo.xpath('span/text()')
-
-			if title: #H2
-				title = str(title[0]).strip(' ')
-				chapter = title.split(' ')[0].lower()
-
-			else: #TR
-				title = chapter_repo.xpath('td/text()')
-
-				if title:
-					if title[0] == 'Github Repository\n':
-						urls = chapter_repo.xpath('td/a/@href')
-						
-						for url in urls:
-							if url.endswith('/'):
-								url = url[0:-1]
-
-							if len(url.split('/')) < 5:
-								print "No repo in {}".format(url)
-								continue
-
-							repo_name = url.split('/')[4]
-							source_url = url + '.git'
-							if chapter == 'data':
-								chapter == 'context'
-							repo_name = normalise_repo_name(chapter+'.'+repo_name)
-							remote_url = 'git@github.com:{}/{}.git'.format(github_org, 
-										  repo_name)
-
-							clone_mirror_list.append([source_url, remote_url]) 
-
-		return clone_mirror_list
-
-
+	return clone_mirror_list

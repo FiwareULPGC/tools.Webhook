@@ -1,33 +1,98 @@
-## Required directory structure
+# Mirroring webhook
 
-The required directory structure for the scripts to work is the following:
+This repository contains a set of scripts to serve as a mirroring service for Github repositories.
 
-```
-| /home/<username>
-| | mirrors
-| | | repos
-| | | script
-| | | | conf.yaml
-| | | | setup-mirror.py
-| | | | update-mirror.py
-| | | | update-def-mirrors.py
-| | | | deny-pull-requests.py
-| | | utils
-| | | | githubmirrorutils.py
-| | | | utils.py
-```
-## repos folder
-* Inside this directory the service will clone the duplicated repositories to be updated.
-## script folder
-* The **update-mirror.py** script is in charge of making the actual update to the mirrored repository. It uses the data provided by **conf.yaml** to correctly prepare and update the mirrored repository.
-* The **setup-mirror.py** script is provided to allow the initialization of a mirror repository without using the web service. It will also populate **conf.yaml** with the appropiate values and structure.
-* The **update-def-mirros.py** script allows the user to create or update the definition, name and the pull request bot URL in a list of repositories.
-* The **deny-pull-requests.py** script acts as the backend for the bot that automatically closes pull requests in mirrored repositories.
-## utils folder
-* This directory contains different utilities for managing the local repositories and the github account where to hold the mirrors.
+## Operating System
 
+The service has been developed and tested under Ubuntu 14.04 OS.
 
-### conf.yaml data structure
+## Sytem dependencies
+
+* [Python 2.7](https://www.python.org/)
+* [Apache HTTP Server](https://httpd.apache.org/)
+* [PHP5](http://php.net/downloads.php)
+* [git](https://git-scm.com/)
+* [pip](https://pypi.python.org/pypi/pip)
+
+## Python dependencies
+
+* [PyYAML](http://pyyaml.org/)
+* [PyGithub](https://pypi.python.org/pypi/PyGithub)
+
+## Installation and configuration guide
+
+### Installing dependencies
+
+Follow the commands below to install the system dependencies:
+
+* Apache and PHP5:
+
+	```
+	sudo apt-get install apache2
+	sudo apt-get install php5
+	sudo apt-get install libapache2-mod-php5
+	sudo service apache2 restart
+	```
+
+* Git command line tool:
+	
+	```
+	sudo apt-get install git
+	```
+
+* Pip, python dependencies installer:
+	
+	```
+	sudo apt-get install python-pip
+	```
+
+Now you are able to install the Python dependencies:
+
+* PyYAML, used to manipulate configuration files in YAML format:
+
+	```
+	sudo pip install pyyaml
+	```
+
+* PyGithub, used to access the Github API via Python code:
+
+	```
+	sudo pip install pygithub
+	```
+
+### Deploying the code
+
+The service is divided into PHP code (simply used as entry point and redirection) and Python code (the actual working code). The PHP code can be found inside the **web** folder and the Python code can be found inside the **script** folder.
+
+#### Backend scripts
+
+All the contents of the **script** folder should be placed in any desired location. In our examples, we have placed them inside **/home/<username>/mirrors/script** folder.
+
+The following changes are needed for the service to work as expected:
+
+* update-mirror.py and deny-pull-requests.py must be granted execution rights.
+
+* User **www-data** must have access to the user without needing password. In order to make sure it can only passwordless execute the update script, we must add the following line to /etc/sudoers:
+
+	```
+	www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py
+	```
+
+    NOTE: It is recommended to always edit sudoers file using the command visudo.
+
+* The **workspace** key inside the **conf.yaml** file must de set to the desired folder to clone repositories.
+
+#### Web service
+
+All the contents of the **web** directory must be inside **/var/www/html/mirror**. This way the access URLs will be of the form `http://<server-ip>/mirror/<action-entry-point>`.
+
+Inside **index.php** the followint variables should be updated accordingly:
+
+* **update_script**: Path to the script **update-mirror.py**.
+* **deny_script**: Path to the script **deny-pull-requests.py**.
+* **github_token_file**: Path to the textfile containing the Github API token
+
+## Configuration file
 
 An example **conf.yaml** configuration is the following:
 ```
@@ -39,42 +104,14 @@ source_repo_urls:
     mirror_remote_url: git@github.com:fiwareulpgcmirror/mirrored-repo2.git
 ```
 
-* The **workspace** key tells the script were to clone and keep the repositories for the update operations.
+* The **workspace** key tells the script were to clone and keep the repositories for the setup and update operations.
 * The **source_repo_urls** key contains a dictionary of cloning URLS. 
 * Every cloning URL is a key for a dictionary indicating the remote url for the mirrored repo. The remote url must be indicated under the key **mirror_remote_url**
 
-## Web service
-
-The web service components can be seen below:
-
-```
-| web
-| | Slim-2.6.2
-| | .htaccess
-| | index.php
-```
-* **Slim** is the framework used to facilitate the usage of REST requests and responses. In the current state, no complex treatment of the hook requests is being made.
-* Inside **.htaccess** file we can find the redirection rules required for the REST service.
-* **index.php** file receives the notifications from Github and it is in charge of redirecting the body to the **update-mirror.py** script. This way, the repository to be updated can be determined.
-* All the contents of the **web** directory must be inside **/var/www/html/mirror**.
-
-## System configuration
-
-The following changes are needed for the service to work as expected:
-
- * **update-mirror.py** and **deny-pull-requests.py** must be granted execution rights.
-
- * User **www-data** must have access to **<username>** user without needing password. In order to make sure it can only passwordless execute the update script, we must add the following line to **/etc/sudoers**:
-
- ```
- www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py
- ```
- 
- ***NOTE***: It is recommended to always edit *sudoers* file using the command `visudo`.
 
 ## Setting up repositories
 
-The **setup-mirror.py** script is invoked using the folllowing parameters:
+The **setup-mirror.py** script is provided to allow the initialization of a mirror repository without using the web service. It will also populate **conf.yaml** with the appropiate values and structure. It invoked using the folllowing parameters:
 
 ```
 setup-mirror.py <github_source_clone_url> <github_mirror_remote_url>

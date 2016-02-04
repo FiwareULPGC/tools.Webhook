@@ -67,15 +67,3 @@ if __name__ == "__main__":
 	token_file = sys.argv[3]
 
 	setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url)
-
-
-# EXAMPLE OF USE
-#
-# def setup_list(filename, org):
-#
-# 	l = parse_clone_mirror_list(filename, org)
-#
-# 	for repo in l:
-# 		setup_mirror(repo[0], repo[1])
-#
-# setup_list('release_summary_r4.html', 'Fiware')

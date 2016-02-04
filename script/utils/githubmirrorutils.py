@@ -19,7 +19,7 @@ class GithubMirrorUtils():
 			self.token = token
 
 		else:
-			raise ValueError("Not token onr tokenfile was passed to the constructor.")
+			raise ValueError("Not token nor tokenfile was passed to the constructor.")
 
 
 	def print_user_login(self):
@@ -116,3 +116,26 @@ class GithubMirrorUtils():
 			else:
 				print "Repo '{}' not found".format(repo_name)
 
+
+	def print_org_repos_size(self, org_name):
+
+		g = Github(self.token)
+
+		organisation = None
+		for org in g.get_user().get_orgs():
+			if org_name == org.login:
+				organisation = org
+				break
+
+		if organisation is None:
+			print "Token user is not inside the organisation '{}'".format(org_name)
+		else:
+			repo_count = 0
+			total_size = 0
+
+			for repo in organisation.get_repos():
+				repo_count += 1
+				total_size += repo.size
+				print "{}({} KB)".format(repo.name, repo.size)
+
+		print "Number of repos: \t{}\nTotal size (KB):\t{}".format(repo_count, total_size)

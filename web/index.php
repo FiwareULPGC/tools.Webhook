@@ -13,14 +13,9 @@ $app->get('/', function() {
 $app->post('/hook',function() use($app){
             $body = $app->request->getBody();
 
-            $myfile = fopen("/var/tmp/hook-request.txt", "w") or die("Unable to open file!");
+            $update_script = "/home/fiwareulpgc/mirrors/script/update-mirror.py";
 
-            fwrite($myfile, $body);
-            fwrite($myfile, "\n");
-
-            fclose($myfile);
-
-            $output = shell_exec("sudo -u fiwareulpgc /home/fiwareulpgc/mirrors/script/update-mirror.py '".$body."'");
+            $output = shell_exec("sudo -u fiwareulpgc ".$update_script." '".$body."'");
 
             echo $body;
 
@@ -30,14 +25,10 @@ $app->post('/hook',function() use($app){
 $app->post('/deny-pull-request',function() use($app){
             $body = $app->request->getBody();
 
-            $myfile = fopen("/var/tmp/pull-request.txt", "w") or die("Unable to open file!");
+            $deny_script = "/home/fiwareulpgc/mirrors/script/deny-pull-requests.py";
+            $github_token_file = "/home/fiwareulpgc/mirrors/script/utils/token-fiware.txt";
 
-            fwrite($myfile, $body);
-            fwrite($myfile, "\n");
-
-            fclose($myfile);
-
-            $output = shell_exec("sudo -u fiwareulpgc /home/fiwareulpgc/mirrors/script/deny-pull-requests.py '".$body."' /home/fiwareulpgc/mirrors/script/utils/token-fiware.txt");
+            $output = shell_exec("sudo -u fiwareulpgc ".$deny_script." '".$body."' ".$github_token_file);
 
             echo $body;
 
