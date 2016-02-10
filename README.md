@@ -119,5 +119,5 @@ setup-mirror.py <github_source_clone_url> <github_mirror_remote_url> <path_to_to
 
 **Example:**
 ```
-setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git
+setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git utils/github-token.txt
 ```
