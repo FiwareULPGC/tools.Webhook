@@ -80,7 +80,9 @@ The following changes are needed for the service to work as expected:
 
     NOTE: It is recommended to always edit sudoers file using the command visudo.
 
-* The **workspace** key inside the **conf.yaml** file must de set to the desired folder to clone repositories.
+* The **workspace** key inside the **conf.yaml** file must be set to the desired folder to clone repositories.
+
+* The user **<username>** must be able to `git clone` and `git push` to the remote repository. This means that the user must have correctly set up its SSH credentials to access Github.
 
 #### Web service
 
@@ -98,10 +100,8 @@ An example **conf.yaml** configuration is the following:
 ```
 workspace: "/home/<username>/mirrors/repos"
 source_repo_urls:
-  https://github.com/fiwareulpgcmirror/source-repo.git:
-    mirror_remote_url: git@github.com:fiwareulpgcmirror/mirrored-repo.git
-  https://github.com/fiwareulpgcmirror/source-repo2.git:
-    mirror_remote_url: git@github.com:fiwareulpgcmirror/mirrored-repo2.git
+  https://github.com/telefonicaid/fiware-orion.git:
+    mirror_remote_url: git@github.com:Fiware/context.Orion.git
 ```
 
 * The **workspace** key tells the script were to clone and keep the repositories for the setup and update operations.
@@ -114,10 +114,10 @@ source_repo_urls:
 The **setup-mirror.py** script is provided to allow the initialization of a mirror repository without using the web service. It will also populate **conf.yaml** with the appropiate values and structure. It invoked using the folllowing parameters:
 
 ```
-setup-mirror.py <github_source_clone_url> <github_mirror_remote_url>
+setup-mirror.py <github_source_clone_url> <github_mirror_remote_url> <path_to_token_file>
 ```
 
 **Example:**
 ```
-setup-mirror.py https://github.com/fiwareulpgcmirror/source-repo.git git@github.com:fiwareulpgcmirror/mirrored-repo.git
+setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git
 ```

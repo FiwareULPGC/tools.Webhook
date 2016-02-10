@@ -24,15 +24,15 @@ source_repo_urls:
   https://github.com/FIWARE-UNIROMA1/FIWARE-OFNIC.git:
     mirror_remote_url: git@github.com:Fiware/i2nd.OFNIC.git
   https://github.com/FiwareTIConsoft/SSECore.git:
-    mirror_remote_url: git@github.com:Fiware/data.SSECore.git
+    mirror_remote_url: git@github.com:Fiware/context.SSECore.git
   https://github.com/FiwareTIConsoft/SSEIndexBuilder.git:
-    mirror_remote_url: git@github.com:Fiware/data.SSEIndexBuilder.git
+    mirror_remote_url: git@github.com:Fiware/context.SSEIndexBuilder.git
   https://github.com/FiwareTIConsoft/fiware-metaware.git:
-    mirror_remote_url: git@github.com:Fiware/data.Metaware.git
+    mirror_remote_url: git@github.com:Fiware/context.Metaware.git
   https://github.com/FiwareTIConsoft/social-data-aggregator.git:
-    mirror_remote_url: git@github.com:Fiware/data.Social-data-aggregator.git
+    mirror_remote_url: git@github.com:Fiware/context.Social-data-aggregator.git
   https://github.com/FiwareTIConsoft/sseFrontEnd.git:
-    mirror_remote_url: git@github.com:Fiware/data.SseFrontEnd.git
+    mirror_remote_url: git@github.com:Fiware/context.SseFrontEnd.git
   https://github.com/Orange-OpenSource/fiware-cepheus.git:
     mirror_remote_url: git@github.com:Fiware/iot.Cepheus.git
   https://github.com/SmartInfrastructures/fi-lab-infographics.git:
@@ -44,7 +44,7 @@ source_repo_urls:
   https://github.com/Wirecloud/wirecloud.git:
     mirror_remote_url: git@github.com:Fiware/apps.Wirecloud.git
   https://github.com/ckan/ckan.git:
-    mirror_remote_url: git@github.com:Fiware/data.Ckan.git
+    mirror_remote_url: git@github.com:Fiware/context.Ckan.git
   https://github.com/conwetlab/Repository-RI.git:
     mirror_remote_url: git@github.com:Fiware/apps.Repository-RI.git
   https://github.com/conwetlab/WMarket.git:
@@ -70,7 +70,7 @@ source_repo_urls:
   https://github.com/icclab/netfloc.git:
     mirror_remote_url: git@github.com:Fiware/i2nd.Netfloc.git
   https://github.com/ishkin/Proton.git:
-    mirror_remote_url: git@github.com:Fiware/data.Proton.git
+    mirror_remote_url: git@github.com:Fiware/context.Proton.git
   https://github.com/openstack/murano.git:
     mirror_remote_url: git@github.com:Fiware/cloud.Murano.git
   https://github.com/openstack/storlets.git:
@@ -86,9 +86,9 @@ source_repo_urls:
   https://github.com/telefonicaid/fiware-cloto.git:
     mirror_remote_url: git@github.com:Fiware/cloud.Cloto.git
   https://github.com/telefonicaid/fiware-cosmos.git:
-    mirror_remote_url: git@github.com:Fiware/data.Cosmos.git
+    mirror_remote_url: git@github.com:Fiware/context.Cosmos.git
   https://github.com/telefonicaid/fiware-cygnus.git:
-    mirror_remote_url: git@github.com:Fiware/data.Cygnus.git
+    mirror_remote_url: git@github.com:Fiware/context.Cygnus.git
   https://github.com/telefonicaid/fiware-facts.git:
     mirror_remote_url: git@github.com:Fiware/cloud.Facts.git
   https://github.com/telefonicaid/fiware-glancesync.git:
@@ -100,7 +100,7 @@ source_repo_urls:
   https://github.com/telefonicaid/fiware-monitoring.git:
     mirror_remote_url: git@github.com:Fiware/ops.Monitoring.git
   https://github.com/telefonicaid/fiware-orion.git:
-    mirror_remote_url: git@github.com:Fiware/data.Orion.git
+    mirror_remote_url: git@github.com:Fiware/context.Orion.git
   https://github.com/telefonicaid/fiware-paas.git:
     mirror_remote_url: git@github.com:Fiware/cloud.Paas.git
   https://github.com/telefonicaid/fiware-sdc.git:
@@ -108,7 +108,7 @@ source_repo_urls:
   https://github.com/telefonicaid/fiware-skuld.git:
     mirror_remote_url: git@github.com:Fiware/ops.Skuld.git
   https://github.com/telefonicaid/fiware-tidoop.git:
-    mirror_remote_url: git@github.com:Fiware/data.Tidoop.git
+    mirror_remote_url: git@github.com:Fiware/context.Tidoop.git
   https://github.com/telefonicaid/lightweightm2m-iotagent.git:
     mirror_remote_url: git@github.com:Fiware/iot.Lightweightm2m-iotagent.git
   https://github.com/xml3d/xml3d.js.git:

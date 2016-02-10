@@ -9,17 +9,13 @@ from github import Github, GithubException
 
 class GithubMirrorUtils():
 
-	def __init__(self, token=None, tokenfile=None):
+	def __init__(self, tokenfile=None):
 
-		if tokenfile is not None:
-			with open(tokenfile, "r") as f:
-				self.token = f.read()
+		with open(tokenfile, "r") as f:
+			self.token = f.read().strip()
 
-		elif token is not None:
-			self.token = token
-
-		else:
-			raise ValueError("Not token nor tokenfile was passed to the constructor.")
+			if self.token is None or self.token == "":
+				raise ValueError("File {} is empty".format(tokenfile))
 
 
 	def print_user_login(self):

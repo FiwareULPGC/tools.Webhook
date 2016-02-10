@@ -1,6 +1,4 @@
 workspace: "/home/fiwareulpgc/mirrors/repos"
 source_repo_urls:
-  'https://github.com/fiwareulpgcmirror/source-repo.git':
-    mirror_remote_url: "git@github.com:fiwareulpgcmirror/mirrored-repo.git"
-  'https://github.com/fiwareulpgcmirror/source-repo2.git':
-    mirror_remote_url: "git@github.com:fiwareulpgcmirror/mirrored-repo2.git"
+  'https://github.com/telefonicaid/fiware-orion.git':
+    mirror_remote_url: "git@github.com:Fiware/context.Orion.git"

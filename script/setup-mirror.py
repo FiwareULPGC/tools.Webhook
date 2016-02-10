@@ -49,8 +49,6 @@ def setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url):
 		call(["git", "fetch", "-p", "origin"])
 		call(["git", "push", "--mirror"])
 
-	call(["rm", "-rf", repository_folder])
-
 
 if __name__ == "__main__":
 
