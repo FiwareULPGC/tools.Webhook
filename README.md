@@ -75,7 +75,7 @@ The following changes are needed for the service to work as expected:
 * User **www-data** must have access to the user without needing password. In order to make sure it can only passwordless execute the update script, we must add the following line to /etc/sudoers:
 
 	```
-	www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py
+	www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py, /home/fiwareulpgc/mirrors/script/deny-pull-requests.py
 	```
 
     NOTE: It is recommended to always edit sudoers file using the command visudo.
@@ -93,6 +93,33 @@ Inside **index.php** the followint variables should be updated accordingly:
 * **update_script**: Path to the script **update-mirror.py**.
 * **deny_script**: Path to the script **deny-pull-requests.py**.
 * **github_token_file**: Path to the textfile containing the Github API token
+
+##### Apache configuration
+
+Make sure that the **rewrite** module is activated:
+
+* Execute `sudo a2enmod rewrite`.
+* Add the following configuration to **/etc/apache2/sites-available/000-default.conf**:
+```
+<VirtualHost *:80>
+        
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /var/www/html>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride all
+                Order allow,deny
+                allow from all
+        </Directory>
+
+</VirtualHost>
+```
+
+* Restart apache with `sudo service apache2 restart`.
 
 ## Configuration file
 
