@@ -75,7 +75,7 @@ The following changes are needed for the service to work as expected:
 * User **www-data** must have access to the user without needing password. In order to make sure it can only passwordless execute the update script, we must add the following line to /etc/sudoers:
 
 	```
-	www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py, /home/fiwareulpgc/mirrors/script/deny-pull-requests.py
+	www-data ALL=(ALL) NOPASSWD: /home/<username>/mirrors/script/update-mirror.py, /home/<username>/mirrors/script/deny-pull-requests.py
 	```
 
     NOTE: It is recommended to always edit sudoers file using the command visudo.
