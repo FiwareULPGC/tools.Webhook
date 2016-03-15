@@ -1,5 +1,8 @@
 # Mirroring webhook
 
+[![MIT license][license-image]][license-url]
+[![Support][support-image]][support-url]
+
 This repository contains a set of scripts to serve as a mirroring service for Github repositories.
 
 ## Operating System
@@ -148,3 +151,12 @@ setup-mirror.py <github_source_clone_url> <github_mirror_remote_url> <path_to_to
 ```
 setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git utils/github-token.txt
 ```
+
+## Troubleshooting
+If you have any feedback or issue please contact us at http://ask.fiware.org using the tag 'webhook'.
+
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-url]: https://github.com/Fiware/tools.Webhook/blob/master/LICENSE
+
+[support-image]: https://img.shields.io/badge/support-askbot-yellowgreen.svg
+[support-url]: http://ask.fiware.org
