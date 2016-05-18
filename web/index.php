@@ -13,10 +13,12 @@ $app->get('/', function() {
 $app->post('/hook',function() use($app){
 
     $update_script = "/home/fiwareulpgc/mirrors/script/update-mirror.py";
+    $github_token_file = "/home/fiwareulpgc/mirrors/script/utils/github-token";
+    $event = $app->request->headers->get('X-GitHub-Event');
     $body = $app->request->getBody();
 
-    $command = "sudo -u fiwareulpgc ".$update_script;
-    $command .= " '".$body."' 2>&1";
+    $command = "sudo -u fiwareulpgc ".$update_script." '".$event."'";
+    $command .= " '".$body."' ".$github_token_file." 2>&1";
 
     exec($command, $output, $return_var);
 

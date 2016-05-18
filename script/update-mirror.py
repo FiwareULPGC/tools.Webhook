@@ -9,10 +9,11 @@ import sys
 import yaml
 
 sys.path.append(os.path.dirname(__file__))
+from utils.githubmirrorutils import GithubMirrorUtils
 from utils.utils import *
 
 
-def update_mirror(payload_or_payload_file):
+def update_mirror(event, payload_or_payload_file, token_file):
 	try:
 		body = json.loads(payload_or_payload_file)
 	except ValueError as error:
@@ -41,17 +42,28 @@ def update_mirror(payload_or_payload_file):
 		call(["git", "fetch", "-p", "origin"])
 		call(["git", "push", "--mirror"])
 
+	if event == "release":
+
+		g = GithubMirrorUtils(tokenfile=token_file)
+
+		g.create_release(user_repo_name['user'], user_repo_name['repo'], 
+						 body["release"]["tag_name"], body["release"]["name"], 
+						 body["release"]["body"], body["release"]["draft"],
+						 body["release"]["prerelease"], body["release"]["assets"])
+
 
 if __name__ == "__main__":
 
-	if len(sys.argv) < 2: 
-		print "No arguments were passed."
+	if len(sys.argv) < 4: 
+		print "Less than 3 arguments were passed."
 		sys.exit(-1)
 
-	elif len(sys.argv) > 2: 
-		print "Only one argument is accepted."
+	elif len(sys.argv) > 4: 
+		print "Only 3 arguments are accepted."
 		sys.exit(-2)
 
-	payload_or_payload_file = sys.argv[1]
+	event = sys.argv[1]
+	payload_or_payload_file = sys.argv[2]
+	token_file = sys.argv[3]
 
-	update_mirror(payload_or_payload_file)
+	update_mirror(event, payload_or_payload_file, token_file)

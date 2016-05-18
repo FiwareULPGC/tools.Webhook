@@ -3,8 +3,11 @@
 import os
 import re
 
+import urllib2
 from utils import normalise_repo_name
 from github import Github, GithubException
+import requests
+from requests.utils import quote
 
 
 class GithubMirrorUtils():
@@ -23,6 +26,28 @@ class GithubMirrorUtils():
 		g = Github(self.token)
 
 		print g.get_user().login
+
+
+	def get_repo_object(self, org_name, repo_name):
+		g = Github(self.token)
+
+		organisation = None
+		for org in g.get_user().get_orgs():
+			if org_name == org.login:
+				organisation = org
+				break
+
+		if organisation is None:
+			print "Token user is not inside the organisation '{}'".format(org_name)
+		else:
+
+			repo = None
+			try:
+				repo = org.get_repo(repo_name)
+			except GithubException:
+				print "Repo '{}' not found".format(repo_name)
+
+			return repo
 
 
 	def create_update_mirror_repo(self, org_name, repo_name, src_url, pr_hook_url):
@@ -135,3 +160,46 @@ class GithubMirrorUtils():
 				print "{}({} KB)".format(repo.name, repo.size)
 
 		print "Number of repos: \t{}\nTotal size (KB):\t{}".format(repo_count, total_size)
+
+
+	def create_release(self, org_name, repo_name, tag_name, name, body, 
+					   draft, prerelease, assets):
+
+		repo = self.get_repo_object(org_name, repo_name)
+
+		if repo is None:
+			return
+
+		# Delete the release to recreate it
+		for release in repo.get_releases():
+			if release.tag_name == tag_name:
+				release.delete_release()
+				
+		release = repo.create_git_release(tag=tag_name, name=name, message=body, 
+									 	  draft=draft, prerelease=prerelease)
+
+		for asset in assets:
+			self.create_asset(asset["name"], asset["label"], asset["content_type"],
+						 asset["browser_download_url"], release.upload_url)
+
+
+	def create_asset(self, name, label, content_type, download_url, upload_url):
+
+		if label is None:
+			upload_url = upload_url.replace("{?name,label}", "")+"?name={}"
+			upload_url = upload_url.format(name)
+		else:
+			upload_url = upload_url.replace("{?name,label}", "")+"?name={}&label={}"
+			upload_url = upload_url.format(name, quote(label))
+
+		headers = {"Content-type": content_type,
+				   "Authorization": "token {}".format(self.token)}
+
+		data = urllib2.urlopen(download_url).read()
+
+		res = requests.post(url=upload_url,
+							data=data,
+							headers=headers,
+							verify=False)
+
+		pass
