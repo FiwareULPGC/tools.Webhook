@@ -28,65 +28,55 @@ class GithubMirrorUtils():
 		print g.get_user().login
 
 
-	def get_repo_object(self, org_name, repo_name):
+	def get_org_object(self, org_name):
+
 		g = Github(self.token)
 
-		organisation = None
+		organization = None
 		for org in g.get_user().get_orgs():
 			if org_name == org.login:
-				organisation = org
+				organization = org
 				break
 
-		if organisation is None:
-			print "Token user is not inside the organisation '{}'".format(org_name)
-		else:
+		if organization is None:
+			print "Token user is not inside the organization '{}'".format(org_name)
 
-			repo = None
+		return organization
+
+
+	def get_repo_object(self, org_name, repo_name):
+
+		organization = self.get_org_object(org_name)
+		
+		repo = None
+		if organization is not None:
 			try:
-				repo = org.get_repo(repo_name)
+				repo = organization.get_repo(repo_name)
 			except GithubException:
 				print "Repo '{}' not found".format(repo_name)
 
-			return repo
+		return repo
 
 
 	def create_update_mirror_repo(self, org_name, repo_name, src_url, pr_hook_url):
 
-		g = Github(self.token)
-
-		organisation = None
-		for org in g.get_user().get_orgs():
-			if org_name == org.login:
-				organisation = org
-				break
-
-		if organisation is None:
-			print "Token user is not inside the organisation '{}'".format(org_name)
+		repo = self.get_repo_object(org_name, repo_name)
+		
+		if repo is not None:
+			print "WARNING: Repo '{}' already exists in the mirror github account".format(repo_name)
 		else:
+			repo = org.create_repo(repo_name)
+			print "Repo '{}' created".format(repo_name)
 
-			repo = None
-			try:
-				repo = org.get_repo(repo_name)
-				found = True
-			except GithubException:
-				found = False
-
-			if found:
-				print "WARNING: Repo '{}' already exists in the mirror github account".format(repo_name)
-			else:
-				repo = org.create_repo(repo_name)
-				print "Repo '{}' created".format(repo_name)
-
-			self.setup_basic_mirror_repo(repo, src_url, pr_hook_url)
-			print "Basc mirror setup completed"
+		self.setup_basic_mirror_repo(repo, src_url, pr_hook_url)
+		print "Basic mirror setup completed"
 
 			
 	def setup_basic_mirror_repo(self, repo_object, src_url, pr_hook_url):
 
-		desc= "This is a mirror repo. Please fork from {}.".format(src_url)
+		desc = "This is a mirror repo. Please fork from {}.".format(src_url)
 
 		repo_object.edit(repo_object.name, description=desc, has_issues=False)
-
 
 		name = "web"
 		config = {"url": pr_hook_url, "content_type": "json"}
@@ -106,60 +96,33 @@ class GithubMirrorUtils():
 		reply = ("This is a mirror repo and the pull request has been closed automatically.\n"
 				"Please, submit your pull request to {}.").format(src_url)
 
-		g = Github(self.token)
+		repo = self.get_repo_object(org_name, repo_name)
 
-		organisation = None
-		for org in g.get_user().get_orgs():
-			if org_name == org.login:
-				organisation = org
-				break
+		if repo is not None:
+			pr = repo.get_pull(pull_request_number)
 
-		if organisation is None:
-			print "Token user is not inside the organisation '{}'".format(org_name)
-		else:
-
-			repo = None
-			try:
-				repo = org.get_repo(repo_name)
-				found = True
-			except GithubException:
-				found = False
-
-			if found:
-				pr = repo.get_pull(pull_request_number)
-	
-				if pr.state != "closed":
-					pr.create_issue_comment(reply)
-					pr.edit(state="closed")
-					print "Pull request with number {} has been closed".format(pull_request_number)
-				else:
-					print "Pull request with number {} is already closed".format(pull_request_number)
+			if pr.state != "closed":
+				pr.create_issue_comment(reply)
+				pr.edit(state="closed")
+				print "Pull request with number {} has been closed".format(pull_request_number)
 			else:
-				print "Repo '{}' not found".format(repo_name)
+				print "Pull request with number {} is already closed".format(pull_request_number)
 
 
 	def print_org_repos_size(self, org_name):
 
-		g = Github(self.token)
+		organization = self.get_org_object(org_name)
 
-		organisation = None
-		for org in g.get_user().get_orgs():
-			if org_name == org.login:
-				organisation = org
-				break
-
-		if organisation is None:
-			print "Token user is not inside the organisation '{}'".format(org_name)
-		else:
+		if organization is not None:
 			repo_count = 0
 			total_size = 0
 
-			for repo in organisation.get_repos():
+			for repo in organization.get_repos():
 				repo_count += 1
 				total_size += repo.size
 				print "{}({} KB)".format(repo.name, repo.size)
 
-		print "Number of repos: \t{}\nTotal size (KB):\t{}".format(repo_count, total_size)
+			print "Number of repos: \t{}\nTotal size (KB):\t{}".format(repo_count, total_size)
 
 
 	def create_release(self, org_name, repo_name, tag_name, name, body, 
@@ -202,4 +165,3 @@ class GithubMirrorUtils():
 							headers=headers,
 							verify=False)
 
-		pass
