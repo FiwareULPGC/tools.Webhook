@@ -3,8 +3,10 @@
 import os
 import re
 
+import json
 import urllib2
 from utils import normalise_repo_name
+
 from github import Github, GithubException
 import requests
 from requests.utils import quote
@@ -44,9 +46,39 @@ class GithubMirrorUtils():
 		return organization
 
 
+	def get_public_org_object(self, org_name):
+
+		g = Github(self.token)
+
+		organization = g.get_organization(org_name)
+		for org in g.get_user().get_orgs():
+			if org_name == org.login:
+				organization = org
+				break
+
+		if organization is None:
+			print "Organization '{}' not found".format(org_name)
+
+		return organization
+
+
 	def get_repo_object(self, org_name, repo_name):
 
 		organization = self.get_org_object(org_name)
+		
+		repo = None
+		if organization is not None:
+			try:
+				repo = organization.get_repo(repo_name)
+			except GithubException:
+				print "Repo '{}' not found".format(repo_name)
+
+		return repo
+
+
+	def get_public_repo_object(self, org_name, repo_name):
+
+		organization = self.get_public_org_object(org_name)
 		
 		repo = None
 		if organization is not None:
@@ -65,7 +97,8 @@ class GithubMirrorUtils():
 		if repo is not None:
 			print "WARNING: Repo '{}' already exists in the mirror github account".format(repo_name)
 		else:
-			repo = org.create_repo(repo_name)
+			organization = self.get_org_object(org_name)
+			repo = organization.create_repo(repo_name)
 			print "Repo '{}' created".format(repo_name)
 
 		self.setup_basic_mirror_repo(repo, src_url, pr_hook_url)
@@ -165,3 +198,29 @@ class GithubMirrorUtils():
 							headers=headers,
 							verify=False)
 
+
+	def recreate_releases(self, source_org, source_repo, mirror_org, mirror_repo):
+
+		print "Recreating releases for repository {}/{}".format(mirror_org, mirror_repo)
+
+		page=1
+		headers = {"Authorization": "token {}".format(self.token)}
+		next_page = True
+
+		while next_page:
+			url = ("https://api.github.com/repos"
+				   "/{}/{}/releases?page={}").format(source_org, source_repo, page)
+			res = requests.get(url=url,
+							   headers=headers,
+							   verify=False)
+
+			releases = json.loads(res.text)
+			for release in releases:
+				self.create_release(mirror_org, mirror_repo, release["tag_name"],
+									release["name"], release["body"], release["draft"], 
+									release["prerelease"], release["assets"])
+
+			page += 1
+			if not ("link" in res.headers 
+					and 'rel="next"' in res.headers["link"]):
+				next_page = False
