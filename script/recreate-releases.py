@@ -12,7 +12,7 @@ from utils.utils import *
 from utils.githubmirrorutils import GithubMirrorUtils
 
 
-def update_def_mirrors(token_file):
+def recreate_releases(token_file):
 
     directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,4 +36,4 @@ def update_def_mirrors(token_file):
 
 if __name__ == "__main__":
 
-    update_def_mirrors(sys.argv[1])
+    recreate_releases(sys.argv[1])
