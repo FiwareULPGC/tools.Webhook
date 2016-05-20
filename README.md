@@ -3,7 +3,7 @@
 [![MIT license][license-image]][license-url]
 [![Support][support-image]][support-url]
 
-This repository contains a set of scripts to serve as a mirroring service for Github repositories.
+This repository contains a set of scripts to serve as a mirroring service for GitHub repositories.
 
 ## Operating System
 
@@ -21,6 +21,7 @@ The service has been developed and tested under Ubuntu 14.04 OS.
 
 * [PyYAML](http://pyyaml.org/)
 * [PyGithub](https://pypi.python.org/pypi/PyGithub)
+* [Requests](https://pypi.python.org/pypi/requests/)
 
 ## Installation and configuration guide
 
@@ -57,10 +58,16 @@ Now you are able to install the Python dependencies:
 	sudo pip install pyyaml
 	```
 
-* PyGithub, used to access the Github API via Python code:
+* PyGithub, used to access the GitHub API via Python code:
 
 	```
 	sudo pip install pygithub
+	```
+
+* Requests, used to access the GitHub API via Python code where PyGithub does not support the GitHub API:
+
+	```
+	sudo pip install requests
 	```
 
 ### Deploying the code
@@ -85,17 +92,17 @@ The following changes are needed for the service to work as expected:
 
 * The **workspace** key inside the **conf.yaml** file must be set to the desired folder to clone repositories.
 
-* The user **<username>** must be able to `git clone` and `git push` to the remote repository. This means that the user must have correctly set up its SSH credentials to access Github.
+* The user **<username>** must be able to `git clone` and `git push` to the remote repository. This means that the user must have correctly set up its SSH credentials to access GitHub.
 
 #### Web service
 
 All the contents of the **web** directory must be inside **/var/www/html/mirror**. This way the access URLs will be of the form `http://<server-ip>/mirror/<action-entry-point>`.
 
-Inside **index.php** the followint variables should be updated accordingly:
+Inside **index.php** the following variables should be updated accordingly:
 
 * **update_script**: Path to the script **update-mirror.py**.
 * **deny_script**: Path to the script **deny-pull-requests.py**.
-* **github_token_file**: Path to the textfile containing the Github API token
+* **github_token_file**: Path to the textfile containing the GitHub API token
 
 ##### Apache configuration
 
@@ -149,7 +156,7 @@ setup-mirror.py <github_source_clone_url> <github_mirror_remote_url> <path_to_to
 
 **Example:**
 ```
-setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git utils/github-token.txt
+setup-mirror.py https://github.com/telefonicaid/fiware-orion.git git@github.com:Fiware/context.Orion.git utils/github-token
 ```
 
 ## Troubleshooting
