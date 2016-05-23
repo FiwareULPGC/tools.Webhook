@@ -11,8 +11,6 @@ sys.path.append(os.path.dirname(__file__))
 from utils.utils import *
 from utils.githubmirrorutils import GithubMirrorUtils
 
-pr_hook_url = 'http://130.206.84.20/mirror/deny-pull-request'
-
 
 def setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url):
 
@@ -21,6 +19,7 @@ def setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url):
     with open(directory+"/conf.yaml", "r") as f:
         config = yaml.load(f)
         config["workspace"] = os.path.expanduser(config["workspace"])
+        pr_hook_url = config["pr_hook_url"]
 
     mirror_user_repo_name = get_user_repo_from_github_url(mirror_remote_url)
     clone_user_repo_name = get_user_repo_from_github_url(repo_clone_url)
