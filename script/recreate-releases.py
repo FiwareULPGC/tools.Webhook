@@ -36,4 +36,8 @@ def recreate_releases(token_file):
 
 if __name__ == "__main__":
 
+    if len(sys.argv) != 2:
+        print "Only 1 argument is accepted."
+        sys.exit(-1)
+
     recreate_releases(sys.argv[1])

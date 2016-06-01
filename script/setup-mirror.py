@@ -64,13 +64,9 @@ def setup_mirror(repo_clone_url, mirror_remote_url, token_file, pr_hook_url):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 4:
-        print "Three arguments arguments are needed."
-        sys.exit(-1)
-
-    elif len(sys.argv) > 4:
+    if len(sys.argv) != 4:
         print "Only 3 arguments are accepted."
-        sys.exit(-2)
+        sys.exit(-1)
 
     repo_clone_url = sys.argv[1]
     mirror_remote_url = sys.argv[2]

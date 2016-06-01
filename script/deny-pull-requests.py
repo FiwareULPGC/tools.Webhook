@@ -62,13 +62,9 @@ def deny_pull_requests(payload_or_payload_file, token_file):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 3:
-        print "Less than two arguments were passed."
-        sys.exit(-1)
-
-    elif len(sys.argv) > 3:
+    if len(sys.argv) != 3:
         print "Only 2 arguments are accepted."
-        sys.exit(-2)
+        sys.exit(-1)
 
     payload_or_payload_file = sys.argv[1]
     token_file = sys.argv[2]

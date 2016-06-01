@@ -38,4 +38,8 @@ def update_def_mirrors(token_file):
 
 if __name__ == "__main__":
 
+    if len(sys.argv) != 2:
+        print "Only 1 argument is accepted."
+        sys.exit(-1)
+
     update_def_mirrors(sys.argv[1])

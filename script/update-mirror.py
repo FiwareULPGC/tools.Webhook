@@ -59,13 +59,9 @@ def update_mirror(event, payload_or_payload_file, token_file):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 4:
-        print "Less than 3 arguments were passed."
-        sys.exit(-1)
-
-    elif len(sys.argv) > 4:
+    if len(sys.argv) != 4:
         print "Only 3 arguments are accepted."
-        sys.exit(-2)
+        sys.exit(-1)
 
     event = sys.argv[1]
     payload_or_payload_file = sys.argv[2]
