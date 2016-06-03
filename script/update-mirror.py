@@ -1,5 +1,12 @@
 #! /usr/bin/env  python
 
+"""Script to update content of a mirrored repository.
+
+This module is invoked from PHP whenever a GitHub event arrives from the 
+original repositories.
+
+"""
+
 import json
 import os
 import shutil

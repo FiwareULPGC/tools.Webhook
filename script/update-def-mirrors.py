@@ -1,5 +1,12 @@
 #! /usr/bin/env  python
 
+"""Script to update the mirror description and deny PR hook configuration.
+
+The operation is executed for all mirror repositories defined in the
+configuration file.
+
+"""
+
 import os
 import shutil
 from subprocess import call

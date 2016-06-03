@@ -1,5 +1,12 @@
 #! /usr/bin/env  python
 
+"""Script to register a new repository to be mirrored and create the mirror.
+
+This script will add the correct new entries for the source and mirror
+repositories inside the configuration file.
+
+"""
+
 import os
 import shutil
 from subprocess import call

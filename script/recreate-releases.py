@@ -1,5 +1,11 @@
 #! /usr/bin/env  python
 
+"""Script to delete and create all mirrored repositories releases.
+
+The list of mirrored repositories to treat is read from the configuration file.
+
+"""
+
 import os
 import shutil
 from subprocess import call

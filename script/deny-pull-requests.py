@@ -1,5 +1,12 @@
 #! /usr/bin/env  python
 
+"""Script to automatically close pull requests in mirrored repositories.
+
+This module is invoked from PHP when PR events arrive from mirrorred 
+repositories.
+
+"""
+
 import json
 import os
 import shutil

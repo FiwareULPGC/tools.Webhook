@@ -1,11 +1,20 @@
 #! /usr/bin/env  python
 
+"""Module for general utility functions.
+
+The functions implemented in this module serve as utility functions for 
+string management, folder management and FIWARE naming conventions enforcing.
+
+"""
+
 import os
 import re
 
 
 class cd:
-    """Context manager for changing the current working directory"""
+
+    """Context manager for changing the current working directory."""
+
     def __init__(self, newPath):
         self.newPath = os.path.expanduser(newPath)
 
@@ -18,6 +27,7 @@ class cd:
 
 
 def get_user_repo_from_github_url(url):
+    """Extract from GitHub URL the owner and repository names."""
 
     regex = ('(?:https://github.com/(?P<user1>.*)/(?P<repo1>.*).git)|'
              '(?:git://github.com/(?P<user2>.*)/(?P<repo2>.*).git)|'
@@ -45,6 +55,7 @@ def get_user_repo_from_github_url(url):
 
 
 def filter_fiware_prefix(name):
+    """Strip FIWARE prefixes from the input name."""
 
     regex = r'(?i)(fiware-?|fi-ware-?)'
     fiware_prefix_pattern = re.compile(regex)
@@ -55,6 +66,7 @@ def filter_fiware_prefix(name):
 
 
 def capitalise_after_chapter(name):
+    """Capitalise the repository name after the chapter name."""
 
     pos = name.find('.')
 
@@ -66,11 +78,13 @@ def capitalise_after_chapter(name):
 
 
 def normalise_repo_name(repo_name):
+    """Apply FIWARE naming conventions to the repository name."""
 
     return capitalise_after_chapter(filter_fiware_prefix(repo_name))
 
 
 def parse_clone_mirror_list_chapter(urls, chapter, github_org):
+    """Transform a list of repositry URLs into webhook conf format."""
 
     clone_mirror_list = []
     for url in urls:
