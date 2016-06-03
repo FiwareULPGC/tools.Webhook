@@ -1,4 +1,5 @@
 workspace: "/home/fiwareulpgc/mirrors/repos"
+pr_hook_url: "http://webhook.fiware.org/mirror/deny-pull-request"
 source_repo_urls:
   'https://github.com/telefonicaid/fiware-orion.git':
     mirror_remote_url: "git@github.com:Fiware/context.Orion.git"
